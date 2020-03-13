@@ -54,20 +54,21 @@ int Partition(int A[],int left,int right,int x)
 
 int Select(int A[],int left,int right,int pos)
 {
+    //划分阶段
+    //排序用时n/5*(5*2)=O(n)
+    //选基准元用时T(n/5)
+    //划分用时0(n)
+    //因此总用时O(n)+T(n/5)
+    int x;
     //基本情况
     if (right-left < 5)
     {
         InsertionSort(A,left,right);
-        return A[(left+right)/2];
+        x = A[(left+right)/2];
     }
     //递归情况
     else
     {
-        //划分阶段
-        //排序用时n/5*(5*2)=O(n)
-        //选基准元用时T(n/5)
-        //划分用时0(n)
-        //因此总用时O(n)+T(n/5)
         int i;
         for (i=left;i<=right-5;i+=5)
         {
@@ -77,22 +78,22 @@ int Select(int A[],int left,int right,int pos)
         InsertionSort(A,i,right);
         swap(A[(i-left)/5+left],A[(i+right)/2]);
 
-        int x = Select(A,left,left+(i-left)/5,(i-left)/10);
-        int k = Partition(A,left,right,x);
+        x = Select(A,left,left+(i-left)/5,(i-left)/10);
+    }
+    int k = Partition(A,left,right,x);
 
-        //解决阶段,T(7*n/10+6)
-        if (k == pos)
-        {
-            return x;
-        }
-        else if (k>pos)
-        {
-            return Select(A,left,left+k,pos);
-        }
-        else
-        {
-            return Select(A,left+k+1,right,pos-k-1);
-        }
+    //解决阶段,T(7*n/10+6)
+    if (k == pos)
+    {
+        return x;
+    }
+    else if (k>pos)
+    {
+        return Select(A,left,left+k-1,pos);
+    }
+    else
+    {
+        return Select(A,left+k+1,right,pos-k-1);
     }
 }
 int main()
